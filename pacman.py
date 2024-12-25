@@ -5,6 +5,9 @@ pygame.init()
 screen = pygame.display.set_mode((600, 600))
 pygame.display.set_caption("Pac-Man")
 
+pacman = pygame.image.load("pacman/pac.png")
+pacman = pygame.transform.scale(pacman, (25,25))
+
 
 
 maze = [
@@ -37,4 +40,10 @@ while running:
         if event.type == pygame.QUIT:
             running = False
 
+    screen.fill((0, 0, 0))
+
+    screen.blit(pacman, (300,300))
+    
+
+    pygame.display.flip()
 pygame.quit()
