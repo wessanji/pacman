@@ -13,6 +13,17 @@ pacman_x, pacman_y = 300, 300
 speed = 0.4
 rotation_angle = 0
 
+#ghosts
+red_ghost = pygame.image.load("pacman/ghostr.png")
+blue_ghost = pygame.image.load("pacman/ghostb.png")
+yellow_ghost = pygame.image.load("pacman/ghosty.png")
+
+red_ghost = pygame.transform.scale(red_ghost, (25, 25))
+blue_ghost = pygame.transform.scale(blue_ghost, (25, 25))
+yellow_ghost = pygame.transform.scale(yellow_ghost, (25, 25))
+
+
+
 #Initialisation of walls
 maze = [
     ['1','1','1','1','1','1','1','1','1','1','1','1','1','1','1','1','1','1','1'],
@@ -37,8 +48,8 @@ maze = [
     ['1',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ','1'],
     ['1','1','1','1','1','1','1','1','1','1','1','1','1','1','1','1','1','1','1']
 ]
-    
 
+    
 walls = []
 tile_size = 30
 for row_index, row in enumerate(maze):
@@ -46,13 +57,27 @@ for row_index, row in enumerate(maze):
         if item == '1':
             walls.append(pygame.Rect(col_index * tile_size, row_index * tile_size, tile_size, tile_size))
 
-
+#spawn of pacman
 for row_index, row in enumerate(maze):
     for col_index, item in enumerate(row):
         if item == 'P':
             pacman_x = col_index * tile_size + tile_size // 2  # Center within the tile
             pacman_y = row_index * tile_size + tile_size // 2
             break
+
+# Spawn ghosts 
+for row_index, row in enumerate(maze):
+    for col_index, item in enumerate(row):
+        if item == 'p':  # Red ghost spawn position
+            red_ghost_x = col_index * tile_size + tile_size // 2
+            red_ghost_y = row_index * tile_size + tile_size // 2
+        if item == 's':  # Blue ghost spawn position
+            blue_ghost_x = col_index * tile_size + tile_size // 2
+            blue_ghost_y = row_index * tile_size + tile_size // 2
+        if item == 'o':  # Yellow ghost spawn position
+            yellow_ghost_x = col_index * tile_size + tile_size // 2
+            yellow_ghost_y = row_index * tile_size + tile_size // 2
+
 
 # Function to check collision with walls
 def check_wall_collision(x, y):
@@ -108,6 +133,12 @@ while running:
 
     #draw rotated pacman at the current position
     screen.blit(rotated_pacman, pacman_rect)
+
+    # Draw ghosts on the screen
+    screen.blit(red_ghost, (red_ghost_x - tile_size // 2, red_ghost_y - tile_size // 2))
+    screen.blit(blue_ghost, (blue_ghost_x - tile_size // 2, blue_ghost_y - tile_size // 2))
+    screen.blit(yellow_ghost, (yellow_ghost_x - tile_size // 2, yellow_ghost_y - tile_size // 2))
+
     
     #update screen display
     pygame.display.flip()
