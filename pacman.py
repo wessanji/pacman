@@ -47,6 +47,12 @@ for row_index, row in enumerate(maze):
             walls.append(pygame.Rect(col_index * tile_size, row_index * tile_size, tile_size, tile_size))
 
 
+for row_index, row in enumerate(maze):
+    for col_index, item in enumerate(row):
+        if item == 'P':
+            pacman_x = col_index * tile_size + tile_size // 2  # Center within the tile
+            pacman_y = row_index * tile_size + tile_size // 2
+            break
 
 #game loop
 running = True
@@ -69,6 +75,7 @@ while running:
     if keys[pygame.K_RIGHT]:  
         pacman_x += speed
         rotation_angle = 0
+
 
 
     # Rotate Pac-Man based on direction
