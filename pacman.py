@@ -10,10 +10,10 @@ pygame.display.set_caption("Pac-Man")
 pacman = pygame.image.load("pacman/paceye.png")
 pacman = pygame.transform.scale(pacman, (25,25))
 pacman_x, pacman_y = 300, 300
-speed = 0.2
+speed = 0.4
 rotation_angle = 0
 
-#Initialisation des murs
+#Initialisation of walls
 maze = [
     ['1','1','1','1','1','1','1','1','1','1','1','1','1','1','1','1','1','1','1'],
     ['1',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ','1'],
@@ -43,8 +43,9 @@ walls = []
 tile_size = 30
 for row_index, row in enumerate(maze):
     for col_index, item in enumerate(row):
-        if item == '1': walls.append(pygame.Rect(col_index * tile_size, row_index * tile_size, tile_size, tile_size))
-    
+        if item == '1':
+            walls.append(pygame.Rect(col_index * tile_size, row_index * tile_size, tile_size, tile_size))
+
 
 
 #game loop
@@ -54,7 +55,7 @@ while running:
         if event.type == pygame.QUIT:
             running = False
 
-    #keybounds for movements
+    #keybinds for movements
     keys = pygame.key.get_pressed()
     if keys[pygame.K_UP]:
         pacman_y -= speed
@@ -80,8 +81,9 @@ while running:
     #fill screen with black colour
     screen.fill((0, 0, 0))
 
-    # Dessiner les murs 
-    for wall in walls: pygame.draw.rect(screen, (255, 255, 255), wall)
+    #draw walls 
+    for wall in walls:
+        pygame.draw.rect(screen, (255, 255, 255), wall)
 
     #draw rotated pacman at the current position
     screen.blit(rotated_pacman, pacman_rect)
