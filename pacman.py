@@ -54,6 +54,14 @@ for row_index, row in enumerate(maze):
             pacman_y = row_index * tile_size + tile_size // 2
             break
 
+# Function to check collision with walls
+def check_wall_collision(x, y):
+    pacman_rect = pygame.Rect(x - tile_size // 2, y - tile_size // 2, tile_size, tile_size)
+    for wall in walls:
+        if pacman_rect.colliderect(wall):
+            return True  # Collision detected
+    return False
+
 #game loop
 running = True
 while running:
@@ -63,18 +71,24 @@ while running:
 
     #keybinds for movements
     keys = pygame.key.get_pressed()
+       # Keybinds for movements with collision check
     if keys[pygame.K_UP]:
-        pacman_y -= speed
-        rotation_angle = 90
-    if keys[pygame.K_DOWN]: 
-        pacman_y += speed
-        rotation_angle = -90
-    if keys[pygame.K_LEFT]:  
-        pacman_x -= speed
-        rotation_angle = 180
-    if keys[pygame.K_RIGHT]:  
-        pacman_x += speed
-        rotation_angle = 0
+        if not check_wall_collision(pacman_x, pacman_y - speed):
+            pacman_y -= speed
+            rotation_angle = 90
+    if keys[pygame.K_DOWN]:
+        if not check_wall_collision(pacman_x, pacman_y + speed):
+            pacman_y += speed
+            rotation_angle = -90
+    if keys[pygame.K_LEFT]:
+        if not check_wall_collision(pacman_x - speed, pacman_y):
+            pacman_x -= speed
+            rotation_angle = 180
+    if keys[pygame.K_RIGHT]:
+        if not check_wall_collision(pacman_x + speed, pacman_y):
+            pacman_x += speed
+            rotation_angle = 0
+
 
 
 
