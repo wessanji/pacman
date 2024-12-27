@@ -5,12 +5,14 @@ import random
 pygame.init()
 screen = pygame.display.set_mode((570, 630))
 pygame.display.set_caption("Pac-Man")
+fps = 60
+timer = pygame.time.Clock()
 
 #game components
 pacman = pygame.image.load("pacman/paceye.png")
 pacman = pygame.transform.scale(pacman, (25,25))
 pacman_x, pacman_y = 300, 300
-speed = 0.4
+speed = 1.5
 rotation_angle = 0
 
 # Initialize score
@@ -41,7 +43,7 @@ maze = [
     ['1',' ','1','1','1','1',' ','1','1','1','1','1',' ','1','1','1','1',' ','1'],
     ['1',' ',' ',' ',' ',' ',' ',' ',' ','r',' ',' ',' ',' ',' ',' ',' ',' ','1'],
     ['1','1',' ','1','1','1',' ','1','1','-','1','1',' ','1','1','1',' ','1','1'],
-    [' ',' ',' ',' ',' ','1',' ','1','s','p','o','1',' ','1',' ',' ',' ',' ',' '],
+    [' ',' ',' ',' ',' ','1',' ','1','s','z','o','1',' ','1',' ',' ',' ',' ',' '],
     ['1','1',' ','1',' ','1',' ','1','1','1','1','1',' ','1',' ','1',' ','1','1'],
     ['1',' ',' ','1',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ','1',' ',' ','1'],
     ['1',' ','1','1','1','1',' ','1','1','1','1','1',' ','1','1','1','1',' ','1'],
@@ -75,7 +77,7 @@ for row_index, row in enumerate(maze):
         elif item == 'P':  # Pac-Man spawn
             pacman_x, pacman_y = x, y
 
-        elif item == 'p':  # Red ghost spawn
+        elif item == 'z':  # Red ghost spawn
             red_ghost_x, red_ghost_y = x, y
 
         elif item == 's':  # Blue ghost spawn
@@ -106,6 +108,8 @@ def check_wall_collision(x, y):
 #game loop
 running = True
 while running:
+    timer.tick(fps)
+
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
