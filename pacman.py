@@ -111,7 +111,7 @@ for row_index, row in enumerate(maze):
         elif item == 'z':  # Blue ghost spawn
             ghosts.append(Ghost(pygame.image.load("pacman/ghostb.png"), x, y))
 
-        elif item == 'o':  # Yellow ghost spawn
+        elif item == '-':  # Yellow ghost spawn
             ghosts.append(Ghost(pygame.image.load("pacman/ghosty.png"), x, y))
 
         elif item == ' ':  # Dot
@@ -126,10 +126,28 @@ def check_wall_collision(x, y, walls):
             return True
     return False
 
+# Function to check collision with ghosts
+def check_ghost_collision(pacman_rect, ghosts):
+    for ghost in ghosts:
+        ghost_rect = pygame.Rect(ghost.x - tile_size // 2, ghost.y - tile_size // 2, tile_size, tile_size)
+        if pacman_rect.colliderect(ghost_rect):
+            return True
+    return False
+
 # Game loop
 running = True
+game_over = False
 while running:
     timer.tick(fps)
+
+    if game_over:
+        # Display "Game Over"
+        game_over_text = font.render("Game Over", True, (255, 0, 0))
+        screen.blit(game_over_text, (200, 300))
+        pygame.display.flip()
+        pygame.time.wait(3000)  # Wait for 3 seconds
+        running = False
+        continue
 
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -159,6 +177,10 @@ while running:
 
     # Get the new rectangle after rotation and keep Pac-Man centered
     pacman_rect = rotated_pacman.get_rect(center=(pacman_x, pacman_y))
+
+    # Check for collision with ghosts
+    if check_ghost_collision(pacman_rect, ghosts):
+        game_over = True
 
     # Move ghosts
     for ghost in ghosts:
