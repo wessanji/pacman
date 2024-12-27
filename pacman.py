@@ -105,10 +105,10 @@ for row_index, row in enumerate(maze):
         elif item == 'P':  # Pac-Man spawn
             pacman_x, pacman_y = x, y
 
-        elif item == 'z':  # Red ghost spawn
+        elif item == 'r':  # Red ghost spawn
             ghosts.append(Ghost(pygame.image.load("pacman/ghostr.png"), x, y))
 
-        elif item == 's':  # Blue ghost spawn
+        elif item == 'z':  # Blue ghost spawn
             ghosts.append(Ghost(pygame.image.load("pacman/ghostb.png"), x, y))
 
         elif item == 'o':  # Yellow ghost spawn
