@@ -1,16 +1,16 @@
 import pygame
 import random
 
-#game window
+# Game window
 pygame.init()
 screen = pygame.display.set_mode((570, 630))
 pygame.display.set_caption("Pac-Man")
 fps = 60
 timer = pygame.time.Clock()
 
-#game components
+# Game components
 pacman = pygame.image.load("pacman/paceye.png")
-pacman = pygame.transform.scale(pacman, (25,25))
+pacman = pygame.transform.scale(pacman, (25, 25))
 pacman_x, pacman_y = 300, 300
 speed = 1.5
 rotation_angle = 0
@@ -21,18 +21,46 @@ score = 0
 # Create font for score display
 font = pygame.font.SysFont("Arial", 24)
 
-#ghosts
-red_ghost = pygame.image.load("pacman/ghostr.png")
-blue_ghost = pygame.image.load("pacman/ghostb.png")
-yellow_ghost = pygame.image.load("pacman/ghosty.png")
+# Ghost class
+class Ghost:
+    def __init__(self, image, start_x, start_y):
+        self.image = pygame.transform.scale(image, (25, 25))
+        self.x = start_x
+        self.y = start_y
+        self.speed = 1.5
+        self.direction = random.choice(['UP', 'DOWN', 'LEFT', 'RIGHT'])
 
-red_ghost = pygame.transform.scale(red_ghost, (25, 25))
-blue_ghost = pygame.transform.scale(blue_ghost, (25, 25))
-yellow_ghost = pygame.transform.scale(yellow_ghost, (25, 25))
+    def move(self, walls):
+        if self.direction == 'UP' and not check_wall_collision(self.x, self.y - self.speed, walls):
+            self.y -= self.speed
+        elif self.direction == 'DOWN' and not check_wall_collision(self.x, self.y + self.speed, walls):
+            self.y += self.speed
+        elif self.direction == 'LEFT' and not check_wall_collision(self.x - self.speed, self.y, walls):
+            self.x -= self.speed
+        elif self.direction == 'RIGHT' and not check_wall_collision(self.x + self.speed, self.y, walls):
+            self.x += self.speed
+        else:
+            self.direction = random.choice(['UP', 'DOWN', 'LEFT', 'RIGHT'])
+
+        # Randomly change direction
+        if random.random() < 0.02:
+            self.direction = random.choice(['UP', 'DOWN', 'LEFT', 'RIGHT'])
+
+        # Teleport to the other side of the screen
+        if self.x < 0:
+            self.x = 570
+        elif self.x > 570:
+            self.x = 0
+        if self.y < 0:
+            self.y = 630
+        elif self.y > 630:
+            self.y = 0
+
+    def draw(self, screen):
+        screen.blit(self.image, (self.x - tile_size // 2, self.y - tile_size // 2))
 
 
-
-#Initialisation of walls
+# Initialization of walls
 maze = [
     ['1','1','1','1','1','1','1','1','1','1','1','1','1','1','1','1','1','1','1'],
     ['1',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ','1'],
@@ -57,11 +85,11 @@ maze = [
     ['1','1','1','1','1','1','1','1','1','1','1','1','1','1','1','1','1','1','1']
 ]
 
-
 # Game setup
 walls = []
 dots = []
-pacman_x = pacman_y = red_ghost_x = red_ghost_y = blue_ghost_x = blue_ghost_y = yellow_ghost_x = yellow_ghost_y = 0
+ghosts = []
+pacman_x = pacman_y = 0
 
 tile_size = 30
 
@@ -78,34 +106,27 @@ for row_index, row in enumerate(maze):
             pacman_x, pacman_y = x, y
 
         elif item == 'z':  # Red ghost spawn
-            red_ghost_x, red_ghost_y = x, y
+            ghosts.append(Ghost(pygame.image.load("pacman/ghostr.png"), x, y))
 
         elif item == 's':  # Blue ghost spawn
-            blue_ghost_x, blue_ghost_y = x, y
+            ghosts.append(Ghost(pygame.image.load("pacman/ghostb.png"), x, y))
 
         elif item == 'o':  # Yellow ghost spawn
-            yellow_ghost_x, yellow_ghost_y = x, y
+            ghosts.append(Ghost(pygame.image.load("pacman/ghosty.png"), x, y))
 
         elif item == ' ':  # Dot
             dots.append((x, y))
 
 
-def check_dot_collision(pacman_x, pacman_y, dot_x, dot_y, tolerance=15):
-    distance = ((pacman_x - dot_x) ** 2 + (pacman_y - dot_y) ** 2) ** 0.5
-    return distance < tolerance    
-      
 # Function to check collision with walls
-def check_wall_collision(x, y):
-    pacman_rect = pygame.Rect(x - tile_size // 2, y - tile_size // 2, tile_size, tile_size)
+def check_wall_collision(x, y, walls):
+    rect = pygame.Rect(x - tile_size // 2, y - tile_size // 2, tile_size, tile_size)
     for wall in walls:
-        if pacman_rect.colliderect(wall):
-            return True 
+        if rect.colliderect(wall):
+            return True
     return False
 
-
-
-
-#game loop
+# Game loop
 running = True
 while running:
     timer.tick(fps)
@@ -117,22 +138,21 @@ while running:
     # Keybinds for movements with collision check
     keys = pygame.key.get_pressed()
     if keys[pygame.K_UP]:
-        if not check_wall_collision(pacman_x, pacman_y - speed):
+        if not check_wall_collision(pacman_x, pacman_y - speed, walls):
             pacman_y -= speed
             rotation_angle = 90
     if keys[pygame.K_DOWN]:
-        if not check_wall_collision(pacman_x, pacman_y + speed):
+        if not check_wall_collision(pacman_x, pacman_y + speed, walls):
             pacman_y += speed
             rotation_angle = -90
     if keys[pygame.K_LEFT]:
-        if not check_wall_collision(pacman_x - speed, pacman_y):
+        if not check_wall_collision(pacman_x - speed, pacman_y, walls):
             pacman_x -= speed
             rotation_angle = 180
     if keys[pygame.K_RIGHT]:
-        if not check_wall_collision(pacman_x + speed, pacman_y):
+        if not check_wall_collision(pacman_x + speed, pacman_y, walls):
             pacman_x += speed
             rotation_angle = 0
-
 
     # Rotate Pac-Man based on direction
     rotated_pacman = pygame.transform.rotate(pacman, rotation_angle)
@@ -140,35 +160,32 @@ while running:
     # Get the new rectangle after rotation and keep Pac-Man centered
     pacman_rect = rotated_pacman.get_rect(center=(pacman_x, pacman_y))
 
-    #draw dots
-    for dot in dots[:]:
-        dot_x, dot_y = dot
-        if check_dot_collision(pacman_x, pacman_y, dot_x, dot_y):
-            dots.remove(dot)
-            score += 10  
+    # Move ghosts
+    for ghost in ghosts:
+        ghost.move(walls)
 
-    #fill screen with black colour
+    # Draw everything
     screen.fill((0, 0, 0))
-
-    #draw walls 
     for wall in walls:
         pygame.draw.rect(screen, (255, 255, 255), wall)
 
-    #draw rotated pacman at the current position
     screen.blit(rotated_pacman, pacman_rect)
 
-    # Draw ghosts on the screen
-    screen.blit(red_ghost, (red_ghost_x - tile_size // 2, red_ghost_y - tile_size // 2))
-    screen.blit(blue_ghost, (blue_ghost_x - tile_size // 2, blue_ghost_y - tile_size // 2))
-    screen.blit(yellow_ghost, (yellow_ghost_x - tile_size // 2, yellow_ghost_y - tile_size // 2))
+    for ghost in ghosts:
+        ghost.draw(screen)
 
-     # Draw the remaining dots
+    for dot in dots[:]:
+        dot_x, dot_y = dot
+        if ((pacman_x - dot_x) ** 2 + (pacman_y - dot_y) ** 2) ** 0.5 < 15:
+            dots.remove(dot)
+            score += 10
+
     for dot in dots:
         pygame.draw.circle(screen, (255, 255, 0), dot, 5)
-    
+
     score_text = font.render(f"Score: {score}", True, (255, 0, 0))
     screen.blit(score_text, (10, 2))
 
-    #update screen display
     pygame.display.flip()
+
 pygame.quit()
