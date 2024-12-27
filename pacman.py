@@ -49,43 +49,53 @@ maze = [
     ['1','1','1','1','1','1','1','1','1','1','1','1','1','1','1','1','1','1','1']
 ]
 
-    
+
+# Game setup
 walls = []
+dots = []
+pacman_x = pacman_y = red_ghost_x = red_ghost_y = blue_ghost_x = blue_ghost_y = yellow_ghost_x = yellow_ghost_y = 0
+
 tile_size = 30
+
+# Iterate through maze
 for row_index, row in enumerate(maze):
     for col_index, item in enumerate(row):
-        if item == '1':
+        x = col_index * tile_size + tile_size // 2
+        y = row_index * tile_size + tile_size // 2
+
+        if item == '1':  # Wall
             walls.append(pygame.Rect(col_index * tile_size, row_index * tile_size, tile_size, tile_size))
 
-#spawn of pacman
-for row_index, row in enumerate(maze):
-    for col_index, item in enumerate(row):
-        if item == 'P':
-            pacman_x = col_index * tile_size + tile_size // 2  # Center within the tile
-            pacman_y = row_index * tile_size + tile_size // 2
-            break
+        elif item == 'P':  # Pac-Man spawn
+            pacman_x, pacman_y = x, y
 
-# Spawn ghosts 
-for row_index, row in enumerate(maze):
-    for col_index, item in enumerate(row):
-        if item == 'p':  # Red ghost spawn position
-            red_ghost_x = col_index * tile_size + tile_size // 2
-            red_ghost_y = row_index * tile_size + tile_size // 2
-        if item == 's':  # Blue ghost spawn position
-            blue_ghost_x = col_index * tile_size + tile_size // 2
-            blue_ghost_y = row_index * tile_size + tile_size // 2
-        if item == 'o':  # Yellow ghost spawn position
-            yellow_ghost_x = col_index * tile_size + tile_size // 2
-            yellow_ghost_y = row_index * tile_size + tile_size // 2
+        elif item == 'p':  # Red ghost spawn
+            red_ghost_x, red_ghost_y = x, y
+
+        elif item == 's':  # Blue ghost spawn
+            blue_ghost_x, blue_ghost_y = x, y
+
+        elif item == 'o':  # Yellow ghost spawn
+            yellow_ghost_x, yellow_ghost_y = x, y
+
+        elif item == ' ':  # Dot
+            dots.append((x, y))
 
 
+def check_dot_collision(pacman_x, pacman_y, dot_x, dot_y, tolerance=15):
+    distance = ((pacman_x - dot_x) ** 2 + (pacman_y - dot_y) ** 2) ** 0.5
+    return distance < tolerance    
+      
 # Function to check collision with walls
 def check_wall_collision(x, y):
     pacman_rect = pygame.Rect(x - tile_size // 2, y - tile_size // 2, tile_size, tile_size)
     for wall in walls:
         if pacman_rect.colliderect(wall):
-            return True  # Collision detected
+            return True 
     return False
+
+
+
 
 #game loop
 running = True
@@ -94,9 +104,8 @@ while running:
         if event.type == pygame.QUIT:
             running = False
 
-    #keybinds for movements
+    # Keybinds for movements with collision check
     keys = pygame.key.get_pressed()
-       # Keybinds for movements with collision check
     if keys[pygame.K_UP]:
         if not check_wall_collision(pacman_x, pacman_y - speed):
             pacman_y -= speed
@@ -115,14 +124,17 @@ while running:
             rotation_angle = 0
 
 
-
-
     # Rotate Pac-Man based on direction
     rotated_pacman = pygame.transform.rotate(pacman, rotation_angle)
 
     # Get the new rectangle after rotation and keep Pac-Man centered
     pacman_rect = rotated_pacman.get_rect(center=(pacman_x, pacman_y))
 
+    #draw dots
+    for dot in dots[:]:
+        dot_x, dot_y = dot
+        if check_dot_collision(pacman_x, pacman_y, dot_x, dot_y):
+            dots.remove(dot)  
 
     #fill screen with black colour
     screen.fill((0, 0, 0))
@@ -139,6 +151,9 @@ while running:
     screen.blit(blue_ghost, (blue_ghost_x - tile_size // 2, blue_ghost_y - tile_size // 2))
     screen.blit(yellow_ghost, (yellow_ghost_x - tile_size // 2, yellow_ghost_y - tile_size // 2))
 
+     # Draw the remaining dots
+    for dot in dots:
+        pygame.draw.circle(screen, (255, 255, 0), dot, 5)
     
     #update screen display
     pygame.display.flip()
