@@ -13,6 +13,12 @@ pacman_x, pacman_y = 300, 300
 speed = 0.4
 rotation_angle = 0
 
+# Initialize score
+score = 0
+
+# Create font for score display
+font = pygame.font.SysFont("Arial", 24)
+
 #ghosts
 red_ghost = pygame.image.load("pacman/ghostr.png")
 blue_ghost = pygame.image.load("pacman/ghostb.png")
@@ -134,7 +140,8 @@ while running:
     for dot in dots[:]:
         dot_x, dot_y = dot
         if check_dot_collision(pacman_x, pacman_y, dot_x, dot_y):
-            dots.remove(dot)  
+            dots.remove(dot)
+            score += 10  
 
     #fill screen with black colour
     screen.fill((0, 0, 0))
@@ -155,6 +162,9 @@ while running:
     for dot in dots:
         pygame.draw.circle(screen, (255, 255, 0), dot, 5)
     
+    score_text = font.render(f"Score: {score}", True, (255, 0, 0))
+    screen.blit(score_text, (10, 2))
+
     #update screen display
     pygame.display.flip()
 pygame.quit()
