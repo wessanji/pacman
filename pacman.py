@@ -189,7 +189,7 @@ while running:
     # Draw everything
     screen.fill((0, 0, 0))
     for wall in walls:
-        pygame.draw.rect(screen, (255, 255, 255), wall)
+        pygame.draw.rect(screen, (128, 128, 128), wall)
 
     screen.blit(rotated_pacman, pacman_rect)
 
@@ -205,7 +205,7 @@ while running:
     for dot in dots:
         pygame.draw.circle(screen, (255, 255, 0), dot, 5)
 
-    score_text = font.render(f"Score: {score}", True, (255, 0, 0))
+    score_text = font.render(f"SCORE: {score}", True, (255, 165, 0))
     screen.blit(score_text, (10, 2))
 
     pygame.display.flip()
