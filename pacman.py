@@ -11,9 +11,7 @@ timer = pygame.time.Clock()
 # Game components
 pacman = pygame.image.load("pacman/paceye.png")
 pacman = pygame.transform.scale(pacman, (25, 25))
-pacman_x, pacman_y = 300, 300
 speed = 1.5
-rotation_angle = 0
 
 # Initialize score
 score = 0
@@ -134,37 +132,11 @@ def check_ghost_collision(pacman_rect, ghosts):
             return True
     return False
 
-# Game loop
-running = True
-game_over = False
-you_win = False  # Added win condition
-while running:
-    timer.tick(fps)
-
-    if game_over:
-        # Display "Game Over"
-        game_over_text = font.render("Game Over", True, (255, 0, 0))
-        screen.blit(game_over_text, (200, 300))
-        pygame.display.flip()
-        pygame.time.wait(3000)  # Wait for 3 seconds
-        running = False
-        continue
-
-    if you_win:
-        # Display "You Win!"
-        win_text = font.render("You Win!", True, (0, 255, 0))
-        screen.blit(win_text, (200, 300))
-        pygame.display.flip()
-        pygame.time.wait(3000)  # Wait for 3 seconds
-        running = False
-        continue
-
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            running = False
-
-    # Keybinds for movements with collision check
+# Function to handle Pac-Man movement
+def handle_pacman_movement(pacman_x, pacman_y, speed, walls):
     keys = pygame.key.get_pressed()
+    rotation_angle = 0
+
     if keys[pygame.K_UP]:
         if not check_wall_collision(pacman_x, pacman_y - speed, walls):
             pacman_y -= speed
@@ -182,10 +154,65 @@ while running:
             pacman_x += speed
             rotation_angle = 0
 
+    return pacman_x, pacman_y, rotation_angle
+
+# Function to draw walls
+def draw_walls(screen, walls):
+    for wall in walls:
+        pygame.draw.rect(screen, (128, 128, 128), wall)
+
+# Function to handle dots
+def handle_dots(screen, pacman_x, pacman_y, dots, score):
+    for dot in dots[:]:
+        dot_x, dot_y = dot
+        if ((pacman_x - dot_x) ** 2 + (pacman_y - dot_y) ** 2) ** 0.5 < 15:
+            dots.remove(dot)
+            score += 10
+
+    for dot in dots:
+        pygame.draw.circle(screen, (255, 255, 0), dot, 5)
+
+    return dots, score
+
+# Function to check win condition
+def check_win_condition(dots):
+    return len(dots) == 0
+
+# Function to draw text (score, game over, etc.)
+def draw_text(screen, text, font, color, position):
+    rendered_text = font.render(text, True, color)
+    screen.blit(rendered_text, position)
+
+# Game loop
+running = True
+game_over = False
+you_win = False  # Added win condition
+while running:
+    timer.tick(fps)
+
+    if game_over:
+        draw_text(screen, "Game Over", font, (255, 0, 0), (200, 300))
+        pygame.display.flip()
+        pygame.time.wait(3000)  # Wait for 3 seconds
+        running = False
+        continue
+
+    if you_win:
+        draw_text(screen, "You Win!", font, (0, 255, 0), (200, 300))
+        pygame.display.flip()
+        pygame.time.wait(3000)  # Wait for 3 seconds
+        running = False
+        continue
+
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            running = False
+
+    # Handle Pac-Man movement
+    pacman_x, pacman_y, rotation_angle = handle_pacman_movement(pacman_x, pacman_y, speed, walls)
+
     # Rotate Pac-Man based on direction
     rotated_pacman = pygame.transform.rotate(pacman, rotation_angle)
-
-    # Get the new rectangle after rotation and keep Pac-Man centered
     pacman_rect = rotated_pacman.get_rect(center=(pacman_x, pacman_y))
 
     # Check for collision with ghosts
@@ -198,29 +225,20 @@ while running:
 
     # Draw everything
     screen.fill((0, 0, 0))
-    for wall in walls:
-        pygame.draw.rect(screen, (128, 128, 128), wall)
-
+    draw_walls(screen, walls)
     screen.blit(rotated_pacman, pacman_rect)
 
     for ghost in ghosts:
         ghost.draw(screen)
 
-    for dot in dots[:]:
-        dot_x, dot_y = dot
-        if ((pacman_x - dot_x) ** 2 + (pacman_y - dot_y) ** 2) ** 0.5 < 15:
-            dots.remove(dot)
-            score += 10
+    # Handle dots
+    dots, score = handle_dots(screen, pacman_x, pacman_y, dots, score)
 
-    # Check if all dots are eaten
-    if not dots:  # If there are no dots left, player wins
+    # Check if player wins
+    if check_win_condition(dots):
         you_win = True
 
-    for dot in dots:
-        pygame.draw.circle(screen, (255, 255, 0), dot, 5)
-
-    score_text = font.render(f"SCORE: {score}", True, (255, 165, 0))
-    screen.blit(score_text, (10, 2))
+    draw_text(screen, f"SCORE: {score}", font, (255, 165, 0), (10, 2))
 
     pygame.display.flip()
 
