@@ -156,10 +156,24 @@ def handle_pacman_movement(pacman_x, pacman_y, speed, walls):
 
     return pacman_x, pacman_y, rotation_angle
 
-# Function to draw walls
-def draw_walls(screen, walls):
-    for wall in walls:
-        pygame.draw.rect(screen, (128, 128, 128), wall)
+
+# Recursive function to draw walls
+def draw_walls_recursive(screen, walls, index=0):
+    if index >= len(walls):  # Base case: No more walls to draw
+        return
+
+    pygame.draw.rect(screen, (128, 128, 128), walls[index])  # Draw current wall
+    draw_walls_recursive(screen, walls, index + 1)  # Recurse for the next wall
+
+# Recursive function to draw dots
+def draw_dots_recursive(screen, dots, index=0):
+    if index >= len(dots):  # Base case: No more dots to draw
+        return
+
+    dot_x, dot_y = dots[index]
+    pygame.draw.circle(screen, (255, 255, 0), (dot_x, dot_y), 5)  # Draw the dot
+    draw_dots_recursive(screen, dots, index + 1)  # Recurse to the next dot
+
 
 # Function to handle dots
 def handle_dots(screen, pacman_x, pacman_y, dots, score):
@@ -169,8 +183,9 @@ def handle_dots(screen, pacman_x, pacman_y, dots, score):
             dots.remove(dot)
             score += 10
 
-    for dot in dots:
-        pygame.draw.circle(screen, (255, 255, 0), dot, 5)
+    # Use the recursive function to draw the remaining dots
+    draw_dots_recursive(screen, dots)
+
 
     return dots, score
 
@@ -225,7 +240,7 @@ while running:
 
     # Draw everything
     screen.fill((0, 0, 0))
-    draw_walls(screen, walls)
+    draw_walls_recursive(screen, walls)
     screen.blit(rotated_pacman, pacman_rect)
 
     for ghost in ghosts:
