@@ -137,6 +137,7 @@ def check_ghost_collision(pacman_rect, ghosts):
 # Game loop
 running = True
 game_over = False
+you_win = False  # Added win condition
 while running:
     timer.tick(fps)
 
@@ -144,6 +145,15 @@ while running:
         # Display "Game Over"
         game_over_text = font.render("Game Over", True, (255, 0, 0))
         screen.blit(game_over_text, (200, 300))
+        pygame.display.flip()
+        pygame.time.wait(3000)  # Wait for 3 seconds
+        running = False
+        continue
+
+    if you_win:
+        # Display "You Win!"
+        win_text = font.render("You Win!", True, (0, 255, 0))
+        screen.blit(win_text, (200, 300))
         pygame.display.flip()
         pygame.time.wait(3000)  # Wait for 3 seconds
         running = False
@@ -201,6 +211,10 @@ while running:
         if ((pacman_x - dot_x) ** 2 + (pacman_y - dot_y) ** 2) ** 0.5 < 15:
             dots.remove(dot)
             score += 10
+
+    # Check if all dots are eaten
+    if not dots:  # If there are no dots left, player wins
+        you_win = True
 
     for dot in dots:
         pygame.draw.circle(screen, (255, 255, 0), dot, 5)
