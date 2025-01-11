@@ -23,10 +23,13 @@ font = pygame.font.SysFont("Arial", 24)
 class PowerUp: 
     def __init__(self, image, x, y, effect):
         self.image = pygame.transform.scale(image, (25, 25))
+        self.x = x 
+        self.y = y
+        self.effect = effect
 
 
 # Ghost class
-     class Ghost:
+    class Ghost:
       def __init__(self, image, start_x, start_y):
         self.image = pygame.transform.scale(image, (25, 25))
         self.x = start_x
