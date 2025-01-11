@@ -9,7 +9,7 @@ fps = 60
 timer = pygame.time.Clock()
 
 # Game components
-pacman = pygame.image.load("pacman/paceye.png")
+pacman = pygame.image.load("paceye.png")
 pacman = pygame.transform.scale(pacman, (25, 25))
 speed = 1.5
 
@@ -20,11 +20,12 @@ score = 0
 font = pygame.font.SysFont("Arial", 24)
 
 # Power-Up class 
-class PowerUp:
+class PowerUp: 
+    def __init__(self, image, x, y, effect):
 
 # Ghost class
-class Ghost:
-    def __init__(self, image, start_x, start_y):
+     class Ghost:
+      def __init__(self, image, start_x, start_y):
         self.image = pygame.transform.scale(image, (25, 25))
         self.x = start_x
         self.y = start_y
@@ -107,13 +108,13 @@ for row_index, row in enumerate(maze):
             pacman_x, pacman_y = x, y
 
         elif item == 'r':  # Red ghost spawn
-            ghosts.append(Ghost(pygame.image.load("pacman/ghostr.png"), x, y))
+            ghosts.append(Ghost(pygame.image.load("ghostr.png"), x, y))
 
         elif item == 'z':  # Blue ghost spawn
-            ghosts.append(Ghost(pygame.image.load("pacman/ghostb.png"), x, y))
+            ghosts.append(Ghost(pygame.image.load("ghostb.png"), x, y))
 
         elif item == '-':  # Yellow ghost spawn
-            ghosts.append(Ghost(pygame.image.load("pacman/ghosty.png"), x, y))
+            ghosts.append(Ghost(pygame.image.load("ghosty.png"), x, y))
 
         elif item == ' ':  # Dot
             dots.append((x, y))
