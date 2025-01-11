@@ -19,6 +19,9 @@ score = 0
 # Create font for score display
 font = pygame.font.SysFont("Arial", 24)
 
+# Power-Up class 
+class PowerUp:
+
 # Ghost class
 class Ghost:
     def __init__(self, image, start_x, start_y):
