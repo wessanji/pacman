@@ -268,8 +268,15 @@ while running:
     pacman_rect = rotated_pacman.get_rect(center=(pacman_x, pacman_y))
 
     # Check for collision with ghosts
-    if check_ghost_collision(pacman_rect, ghosts):
-        game_over = True
+    for ghosts in ghost[:]:
+        if pacman_rect.colliderect(ghost):
+            if power_up_active: # Eat the ghost
+                ghosts.remove(ghost)
+                ghost_respawn_timers.append((ghost, pygame.time.get_ticks())) # Schedule respawn
+                score+= 50
+            else: # Pac-Man is caught 
+                if check_ghost_collision(pacman_rect, ghosts):
+                    game_over = True
 
     # Move ghosts
     for ghost in ghosts:
