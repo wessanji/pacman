@@ -213,6 +213,8 @@ def respawn_ghosts():
     current_time = pygame.time.get_ticks()
     for ghost_timer in ghost_respawn_timers[:]:
         if current_time - ghost_timer[1] > 5000: # 5 seconds
+            ghost_respawn_timers.remove(ghost_timer)
+
 
 
  
