@@ -308,6 +308,10 @@ while running:
          power_up_timer = pygame.time.get_ticks() # Activate the timer
          power_up.x, power_up.y = -100, -100 # Remove the power-up from the screen
 
+    # Check power-up ending
+    if power_up_active and pygame.time.get_ticks() - power_up_timer > 5000: # Duration of 5 seconds
+        power_up_active = False
+
     # Draw power-up
     if not power_up_active: 
         power_up.draw(screen)
