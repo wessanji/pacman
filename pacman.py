@@ -224,7 +224,8 @@ ghost_respawn_positions = [
     (570 // 2 + 30 * 2, 630 // 2) 
     ]
 
-
+# ghosts initialisation
+ghosts = 
 
  
 
