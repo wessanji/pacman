@@ -211,6 +211,10 @@ def draw_text(screen, text, font, color, position):
 def respawn_ghosts():
     global ghost_respawn_timers 
     current_time = pygame.time.get_ticks()
+    for ghost_timer in ghost_respawn_timers[:]:
+        if current_time - ghost_timer[1] > 5000: # 5 seconds
+
+
  
 
 # Game loop
