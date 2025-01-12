@@ -216,6 +216,13 @@ def respawn_ghosts():
             ghost_respawn_timers.remove(ghost_timer)
             # Respawn at the nest
             ghost = Ghost(pygame.image.load("ghostr.png")('ghostb.png')('ghosty.png'), ghost_respawn_positions[0], ghost_respawn_positions[1])
+            ghosts.append(ghost)
+
+# ghosts respawn position
+ghost_respawn_positions = [ 
+    (570 // 2 - 30 * 2, 630 // 2), 
+    (570 // 2 + 30 * 2, 630 // 2) 
+    ]
 
 
 
