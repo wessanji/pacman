@@ -209,10 +209,12 @@ def draw_text(screen, text, font, color, position):
 
 # Function to respawn ghosts
 def respawn_ghosts():
+    global ghost_respawn_timers 
+    current_time = pygame.time.get_ticks()
  
 
 # Game loop
- running = True
+running = True
 game_over = False
 you_win = False  # Added win condition
 while running:
