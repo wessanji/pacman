@@ -207,8 +207,12 @@ def draw_text(screen, text, font, color, position):
     rendered_text = font.render(text, True, color)
     screen.blit(rendered_text, position)
 
+# Function to respawn ghosts
+def respawn_ghosts():
+ 
+
 # Game loop
-running = True
+ running = True
 game_over = False
 you_win = False  # Added win condition
 while running:
