@@ -228,12 +228,17 @@ ghost_respawn_positions = [
 ghosts = [pygame.Rect(pos[0], pos[1], 30, 30) for pos in ghost_respawn_positions]
 ghost_respawn_timers = []
 
- 
-
-# Game loop
+ # Game loop
 running = True
 game_over = False
 you_win = False  # Added win condition
+power_up_active = False # Power-up state
+power_up_timer = 0 # Power-up timer
+
+# Initialize power-up
+power_up_image = pygame.image.load("powerup.png") 
+power_up = PowerUp(power_up_image, 285, 315, "effect")
+
 while running:
     timer.tick(fps)
 
@@ -291,6 +296,9 @@ while running:
     respawn_ghosts()
 
     # Check for collision with power-up
+    if pacman_rect.colliderect(power_up):
+         power_up_active = True
+         power_up_timer = pygame.time.get_ticks() # Activate the timer
     
     pygame.display.flip()
 
