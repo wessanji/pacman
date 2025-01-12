@@ -225,7 +225,8 @@ ghost_respawn_positions = [
     ]
 
 # ghosts initialisation
-ghosts = 
+ghosts = [pygame.Rect(pos[0], pos[1], 30, 30) for pos in ghost_respawn_positions]
+
 
  
 
