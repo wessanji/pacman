@@ -289,6 +289,8 @@ while running:
     
     # Respawn ghosts
     respawn_ghosts()
+
+    # Check for collision with power-up
     
     pygame.display.flip()
 
