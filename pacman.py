@@ -286,7 +286,10 @@ while running:
         you_win = True
 
     draw_text(screen, f"SCORE: {score}", font, (255, 165, 0), (10, 2))
-
+    
+    # Respawn ghosts
+    respawn_ghosts()
+    
     pygame.display.flip()
 
 pygame.quit()
