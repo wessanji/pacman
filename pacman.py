@@ -214,6 +214,8 @@ def respawn_ghosts():
     for ghost_timer in ghost_respawn_timers[:]:
         if current_time - ghost_timer[1] > 5000: # 5 seconds
             ghost_respawn_timers.remove(ghost_timer)
+            # Respawn at the nest
+            ghost = Ghost(pygame.image.load("ghost.png"), ghost_respawn_positions[0], ghost_respawn_positions[1])
 
 
 
