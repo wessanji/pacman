@@ -299,6 +299,11 @@ while running:
     if pacman_rect.colliderect(power_up):
          power_up_active = True
          power_up_timer = pygame.time.get_ticks() # Activate the timer
+         power_up.x, power_up.y = -100, -100 # Remove the power-up from the screen
+
+    # Draw power-up
+    if not power_up_active: 
+        power_up.draw(screen)
     
     pygame.display.flip()
 
